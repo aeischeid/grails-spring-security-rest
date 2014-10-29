@@ -49,7 +49,7 @@ class GormTokenStorageService implements TokenStorageService, GrailsApplicationA
         String tokenValuePropertyName = conf.rest.token.storage.gorm.tokenValuePropertyName
         String usernamePropertyName = conf.rest.token.storage.gorm.usernamePropertyName
         dc.withTransaction { status ->
-            def newTokenObject = dc.newInstance((tokenValuePropertyName): tokenValue, (usernamePropertyName): principal.username)\
+            def newTokenObject = dc.newInstance((tokenValuePropertyName): tokenValue, (usernamePropertyName): principal.username)
             newTokenObject.save()
         }
     }

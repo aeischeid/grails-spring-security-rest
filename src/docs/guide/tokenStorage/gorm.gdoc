@@ -19,7 +19,9 @@ class AuthenticationToken {
     String username
 
     static mapping = {
-        version false
+        version(false) // Grails' default optimistic locking mechanism is unwanted on this domain
+        id(generator:'assigned', name: 'tokenValue') // tokenValue is unique & is way a token will be looked up so using it as the 'id/pkey' for makes sense
+        cache(true) // Grails by default comes with ehcache configured. Take advantage of that on repeat token lookups.
     }
 }
 {code}
@@ -36,6 +38,8 @@ using this strategy will probably have the standard User and Role domain classes
 is passed to the default @userDetailsService@ bean, which in the case of the default Spring Security Core GORM
 implementation will fetch the information from the mentioned domain classes.
 * GORM's optimistic locking feature is likely unecessary and may cause performance issues.
+* Depending on your tokenValue generator scheme you can likely designate that property as the 'id' for GORM to use. This can help
+keep the tokens as light weight as possible.
 * You'll have to handle token expiration by yourself via Quartz jobs or a similar mechanism. There are various ways you might
 go about this.
 
@@ -76,7 +80,7 @@ Simply using your own date or timestamp is also a valid option.
         // then refresh it
         if (refreshed < new Date() -1) {
             refreshed = new Date()
-            it.save()
+            this.save()
         }
     }
 {code}
